@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Mitr:wght@200;300;400;500;600;700&family=Noto+Sans+Thai:wdth,wght@62.5..100,100..900&family=Noto+Serif+Thai:wght@100..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #4f46e5;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #e0e7ff;
+  --color-on-primary-container: #312e81;
+  --color-primary-dim: #4338ca;
+  --color-primary-fixed: #4f46e5;
+  --color-primary-fixed-dim: #6366f1;
+  --color-on-primary-fixed: #ffffff;
+  --color-on-primary-fixed-variant: #312e81;
+
+  --color-secondary: #0d9488;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #ccfbf1;
+  --color-on-secondary-container: #115e59;
+  --color-secondary-dim: #0f766e;
+  --color-secondary-fixed: #0d9488;
+  --color-secondary-fixed-dim: #14b8a6;
+  --color-on-secondary-fixed: #ffffff;
+  --color-on-secondary-fixed-variant: #115e59;
+
+  --color-tertiary: #7c3aed;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #f5f3ff;
+  --color-on-tertiary-container: #4c1d95;
+  --color-tertiary-dim: #6d28d9;
+  --color-tertiary-fixed: #7c3aed;
+  --color-tertiary-fixed-dim: #8b5cf6;
+  --color-on-tertiary-fixed: #ffffff;
+  --color-on-tertiary-fixed-variant: #4c1d95;
+
+  --color-error: #e11d48;
+  --color-on-error: #ffffff;
+  --color-error-container: #fff1f2;
+  --color-on-error-container: #9f1239;
+  --color-error-dim: #be123c;
+
+  --color-background: #f8fafc;
+  --color-on-background: #0f172a;
+  --color-surface: #f8fafc;
+  --color-on-surface: #0f172a;
+  --color-surface-variant: #f1f5f9;
+  --color-on-surface-variant: #475569;
+  --color-outline: #94a3b8;
+  --color-outline-variant: #cbd5e1;
+
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f8fafc;
+  --color-surface-container: #f1f5f9;
+  --color-surface-container-high: #e2e8f0;
+  --color-surface-container-highest: #cbd5e1;
+  --color-surface-bright: #ffffff;
+  --color-surface-dim: #e2e8f0;
+
+  --color-inverse-surface: #1e293b;
+  --color-inverse-on-surface: #f1f5f9;
+  --color-inverse-primary: #818cf8;
+  --color-surface-tint: #4f46e5;
+
+  --font-headline: "Noto Serif Thai", serif;
+  --font-body: "Noto Serif Thai", serif;
+  --font-label: "Noto Serif Thai", serif;
+  --font-serif: "Noto Serif Thai", serif;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-on-background font-body;
+    min-height: 100dvh;
+  }
+}
+
+.editorial-header {
+  @apply font-headline;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.editorial-shadow {
+  box-shadow: 0 20px 40px rgba(69, 40, 0, 0.08);
+}

@@ -1,0 +1,134 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: sales
+    // Fields:
+    //   - date: string (ISO 8601)
+    //   - category: string ('Roti', 'Congee')
+    //   - session: string ('Morning', 'Evening')
+    //   - amount: number (>= 0)
+    //   - authorUid: string (matches auth.uid)
+    //   - createdAt: string (ISO 8601)
+    //
+    // Collection: expenses
+    // Fields:
+    //   - date: string (ISO 8601)
+    //   - segment: string ('Roti', 'Congee', 'General')
+    //   - category: string
+    //   - item: string (optional)
+    //   - amount: number (>= 0)
+    //   - authorUid: string (matches auth.uid)
+    //   - createdAt: string (ISO 8601)
+    //
+    // Collection: ingredients
+    // Fields:
+    //   - name: string
+    //   - unit: string
+    //   - pricePerUnit: number (>= 0)
+    //   - authorUid: string (matches auth.uid)
+    //   - updatedAt: string (ISO 8601)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.authorUid;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        (request.auth.token.email == "tanakornn.h20@gmail.com" && request.auth.token.email_verified == true);
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function isValidString(field, minLen, maxLen) {
+      return request.resource.data[field] is string &&
+             request.resource.data[field].size() >= minLen &&
+             request.resource.data[field].size() <= maxLen;
+    }
+
+    function isValidOptionalString(field, maxLen) {
+      return !(field in request.resource.data) || 
+             (request.resource.data[field] is string && request.resource.data[field].size() <= maxLen);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidSale(data) {
+      return hasRequiredFields(['date', 'category', 'session', 'amount', 'authorUid', 'createdAt']) &&
+             data.amount is number && data.amount >= 0 &&
+             data.category in ['Roti', 'Congee'] &&
+             data.session in ['Morning', 'Evening'] &&
+             data.authorUid == request.auth.uid;
+    }
+
+    function isValidExpense(data) {
+      return hasRequiredFields(['date', 'segment', 'category', 'amount', 'authorUid', 'createdAt']) &&
+             data.amount is number && data.amount >= 0 &&
+             data.segment in ['Roti', 'Congee', 'General'] &&
+             isValidString('category', 1, 100) &&
+             isValidOptionalString('item', 200) &&
+             data.authorUid == request.auth.uid;
+    }
+
+    function isValidIngredient(data) {
+      return hasRequiredFields(['name', 'unit', 'pricePerUnit', 'authorUid', 'updatedAt']) &&
+             isValidString('name', 1, 100) &&
+             isValidString('unit', 1, 50) &&
+             data.pricePerUnit is number && data.pricePerUnit >= 0 &&
+             data.authorUid == request.auth.uid;
+    }
+
+    // ===============================================================
+    // Collection Rules
+    // ===============================================================
+
+    match /sales/{saleId} {
+      allow read: if isAuthenticated() && (isDocOwner() || isAdmin());
+      allow create: if isAuthenticated() && isValidSale(request.resource.data);
+      allow update: if isAuthenticated() && isDocOwner() && isValidSale(request.resource.data);
+      allow delete: if isAuthenticated() && (isDocOwner() || isAdmin());
+    }
+
+    match /expenses/{expenseId} {
+      allow read: if isAuthenticated() && (isDocOwner() || isAdmin());
+      allow create: if isAuthenticated() && isValidExpense(request.resource.data);
+      allow update: if isAuthenticated() && isDocOwner() && isValidExpense(request.resource.data);
+      allow delete: if isAuthenticated() && (isDocOwner() || isAdmin());
+    }
+
+    match /ingredients/{ingredientId} {
+      allow read: if isAuthenticated() && (isDocOwner() || isAdmin());
+      allow create: if isAuthenticated() && isValidIngredient(request.resource.data);
+      allow update: if isAuthenticated() && isDocOwner() && isValidIngredient(request.resource.data);
+      allow delete: if isAuthenticated() && (isDocOwner() || isAdmin());
+    }
+    
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "entities": {
+    "Sale": {
+      "title": "Sale",
+      "description": "A record of a sales transaction.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "category": { "type": "string", "enum": ["Roti", "Congee"] },
+        "session": { "type": "string", "enum": ["Morning", "Evening"] },
+        "amount": { "type": "number" },
+        "authorUid": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["date", "category", "session", "amount", "authorUid", "createdAt"]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "A record of an expense transaction.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "segment": { "type": "string", "enum": ["Roti", "Congee", "General"] },
+        "category": { "type": "string" },
+        "item": { "type": "string" },
+        "amount": { "type": "number" },
+        "authorUid": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["date", "segment", "category", "amount", "authorUid", "createdAt"]
+    },
+    "Ingredient": {
+      "title": "Ingredient",
+      "description": "A record of an ingredient in stock.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "unit": { "type": "string" },
+        "pricePerUnit": { "type": "number" },
+        "authorUid": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "unit", "pricePerUnit", "authorUid", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/sales/{saleId}": {
+      "schema": "Sale",
+      "description": "Collection of sales records."
+    },
+    "/expenses/{expenseId}": {
+      "schema": "Expense",
+      "description": "Collection of expense records."
+    },
+    "/ingredients/{ingredientId}": {
+      "schema": "Ingredient",
+      "description": "Collection of ingredients."
+    }
+  }
+}
